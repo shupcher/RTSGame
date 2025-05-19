@@ -9,4 +9,6 @@ public class Globals
         new BuildingData("Building", 100)
     };
 
+    public static int TERRAIN_LAYER_MASK = 1 << 8;
+
 }
