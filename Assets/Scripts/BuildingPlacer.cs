@@ -24,6 +24,11 @@ public class BuildingPlacer : MonoBehaviour
                 return;
             }
 
+            if (_placedBuilding.HasValidPlacement && Input.GetMouseButtonDown(0))
+            {
+                _PlaceBuilding();
+            }
+
             _ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             //Casts a ray from the camera to the point clicked and outputs a hit if there is one
             if (Physics.Raycast(_ray, out _raycastHit, 1000f, Globals.TERRAIN_LAYER_MASK))
@@ -48,7 +53,7 @@ public class BuildingPlacer : MonoBehaviour
     void _PreparePlacedBuilding(int buildingDataIndex)
     {
         // destroy the previous "phantom" if there is one
-        if (_placedBuilding != null)
+        if (_placedBuilding != null && !_placedBuilding.IsFixed)
         {
             Destroy(_placedBuilding.Transform.gameObject);
         }
@@ -64,5 +69,12 @@ public class BuildingPlacer : MonoBehaviour
         // destroy the "phantom" building
         Destroy(_placedBuilding.Transform.gameObject);
         _placedBuilding = null;
+    }
+    
+    void _PlaceBuilding()
+    {
+        _placedBuilding.Place();
+        // keep on building the same building type
+        _PreparePlacedBuilding(_placedBuilding.DataIndex);
     }
 }
