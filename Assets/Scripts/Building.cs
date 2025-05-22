@@ -21,7 +21,7 @@ public class Building
     private List<Material> _materials;
     private int _currentHealth;
 
-    //Constructs an instance of a building with name Code by pulling public getter data from BuildingData "abstract" class and initializing the building with those values.
+    //Constructs an instance of a building with namecode by pulling public getter data from BuildingData "abstract" class and initializing the building with those values.
     public Building(BuildingData data)
     {
         _data = data;
