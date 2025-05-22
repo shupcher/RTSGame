@@ -11,6 +11,7 @@ Creates an instance of the building prefab using the BuildingData class()
         FIXED
     };
 
+//Constructs an instance of a building with namecode by pulling public getter data from BuildingData "abstract" class and initializing the building with those values.
 public class Building
 {
 
@@ -21,7 +22,6 @@ public class Building
     private List<Material> _materials;
     private int _currentHealth;
 
-    //Constructs an instance of a building with namecode by pulling public getter data from BuildingData "abstract" class and initializing the building with those values.
     public Building(BuildingData data)
     {
         _data = data;
@@ -113,7 +113,7 @@ public class Building
     //Public HP allowed to set in case we want to update the value from outside the class
     public int HP { get => _currentHealth; set => _currentHealth = value; }
     public int MaxHP { get => _data.HP; }
-    //DataIndex is a "computed" property taht gives us the index of teh building type data instance.
+    //DataIndex is a "computed" property taht gives us the index of the building type data instance.
     public int DataIndex
     {
         get
