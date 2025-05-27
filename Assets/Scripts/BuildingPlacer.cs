@@ -7,11 +7,9 @@ public class BuildingPlacer : MonoBehaviour
     private RaycastHit _raycastHit;
     private Vector3 _lastPlacementPosition;
 
-    void Start()
+    public void SelectPlacedBuilding(int buildingDataIndex)
     {
-        // for now, we'll automatically pick our first
-        // building type as the type we want to build
-        _PreparePlacedBuilding(0);
+        _PreparePlacedBuilding(buildingDataIndex);
     }
 
     void Update()
@@ -62,6 +60,11 @@ public class BuildingPlacer : MonoBehaviour
         );
         _placedBuilding = building;
         _lastPlacementPosition = Vector3.zero;
+
+        // link the data into the manager
+        building.Transform.GetComponent<BuildingManager>().Initialize(building);
+        _placedBuilding = building;
+        _lastPlacementPosition = Vector3.zero;
     }
 
     void _CancelPlacedBuilding()
@@ -70,7 +73,7 @@ public class BuildingPlacer : MonoBehaviour
         Destroy(_placedBuilding.Transform.gameObject);
         _placedBuilding = null;
     }
-    
+
     void _PlaceBuilding()
     {
         _placedBuilding.Place();

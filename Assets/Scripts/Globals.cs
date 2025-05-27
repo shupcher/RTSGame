@@ -6,7 +6,8 @@ public class Globals
 
     public static BuildingData[] BUILDING_DATA = new BuildingData[]
     {
-        new BuildingData("Building", 100)
+        new BuildingData("House", 100),
+        new BuildingData("Tower", 50)
     };
 
 //Since the layer needs to be represented in binary use bitmasking (a list of all the layers with either a 0 or 1 to represent if they're part of the mask)

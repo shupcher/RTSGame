@@ -4,12 +4,12 @@ using UnityEngine;
 /*
 Creates an instance of the building prefab using the BuildingData class()
 */
- public enum BuildingPlacement
-    {
-        VALID,
-        INVALID,
-        FIXED
-    };
+public enum BuildingPlacement
+{
+    VALID,
+    INVALID,
+    FIXED
+};
 
 //Constructs an instance of a building with namecode by pulling public getter data from BuildingData "abstract" class and initializing the building with those values.
 public class Building
@@ -28,19 +28,23 @@ public class Building
         _currentHealth = data.HP;
         _materials = new List<Material>();
 
-        //Saves prefabs material in order to restore the building's original appearance when its BuildingPlacement state becomes FIXED
-        foreach (Material material in _transform.Find("Mesh").GetComponent<Renderer>().materials)
-        {
-            _materials.Add(new Material(material));
-        }
-
         GameObject g = GameObject.Instantiate(
             Resources.Load($"Prefabs/Buildings/{_data.Code}")
+
         ) as GameObject;
         _transform = g.transform;
         // set building mode as "valid" placement
         _buildingManager = g.GetComponent<BuildingManager>();
         _placement = BuildingPlacement.VALID;
+
+        //Saves prefabs material in order to restore the building's original appearance when its BuildingPlacement state becomes FIXED
+        foreach (Material material in _transform.Find("Mesh").GetComponentInChildren<MeshRenderer>().materials)
+        {
+            _materials.Add(new Material(material));
+            var renderer = _transform.Find("Mesh").GetComponentInChildren<MeshRenderer>();
+            Debug.Log("Initial material count: " + renderer.materials.Length);
+
+        }
         SetMaterials();
     }
 
@@ -52,6 +56,7 @@ public class Building
         if (placement == BuildingPlacement.VALID)
         {
             Material refMaterial = Resources.Load("Materials/Valid") as Material;
+            Debug.Log("Loaded material: " + refMaterial);
             materials = new List<Material>();
             //Iterates over all materials to replace them all with the same one
             for (int i = 0; i < _materials.Count; i++)
@@ -63,6 +68,7 @@ public class Building
         else if (placement == BuildingPlacement.INVALID)
         {
             Material refMaterial = Resources.Load("Materials/Invalid") as Material;
+            Debug.Log("Loaded material: " + refMaterial);
             materials = new List<Material>();
             for (int i = 0; i < _materials.Count; i++)
             {
@@ -78,7 +84,7 @@ public class Building
         {
             return;
         }
-        _transform.Find("Mesh").GetComponent<Renderer>().materials = materials.ToArray();
+        _transform.Find("Mesh").GetComponentInChildren<MeshRenderer>().materials = materials.ToArray();
     }
 
     public void Place()
