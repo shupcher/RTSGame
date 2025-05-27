@@ -28,12 +28,6 @@ public class Building
         _currentHealth = data.HP;
         _materials = new List<Material>();
 
-        //Saves prefabs material in order to restore the building's original appearance when its BuildingPlacement state becomes FIXED
-        foreach (Material material in _transform.Find("Mesh").GetComponent<Renderer>().materials)
-        {
-            _materials.Add(new Material(material));
-        }
-
         GameObject g = GameObject.Instantiate(
             Resources.Load($"Prefabs/Buildings/{_data.Code}")
         ) as GameObject;
@@ -42,6 +36,12 @@ public class Building
         _buildingManager = g.GetComponent<BuildingManager>();
         _placement = BuildingPlacement.VALID;
         SetMaterials();
+
+         //Saves prefabs material in order to restore the building's original appearance when its BuildingPlacement state becomes FIXED
+        foreach (Material material in _transform.Find("Mesh").GetComponent<MeshRenderer>().materials)
+        {
+            _materials.Add(new Material(material));
+        }
     }
 
     public void SetMaterials() { SetMaterials(_placement); }

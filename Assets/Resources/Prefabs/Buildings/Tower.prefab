@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1999786301725652373}
   - component: {fileID: 3844255425964639540}
   - component: {fileID: 3241440008392102036}
+  - component: {fileID: 7624602064114806866}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Untagged
@@ -82,6 +83,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5, y: 14, z: 5}
   m_Center: {x: 0, y: 7, z: 0}
+--- !u!114 &7624602064114806866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 553907901843444039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 240b637f74185a8c5a2879b2d9fc9e2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9015177288086858056
 GameObject:
   m_ObjectHideFlags: 0
@@ -146,7 +159,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: bf77da20b6f7015c68b049a1936e104b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
