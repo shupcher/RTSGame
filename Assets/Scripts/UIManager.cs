@@ -46,7 +46,10 @@ public class UIManager : MonoBehaviour
 
     private void UpdateResourceTexts()
     {
-    
+        foreach (KeyValuePair<string, GameResource> pair in Globals.GAME_RESOURCES)
+        {
+            _SetResourceText(pair.Key, pair.Value.Amount);
+        }
     }
     private void _AddBuildingButtonListener(Button b, int i)
     {
