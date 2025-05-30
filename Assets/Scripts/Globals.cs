@@ -20,8 +20,8 @@ public class Globals
         new Dictionary<string, GameResource>()
     {
         //Key, value = Game Resource, initial value
-        { "money", new GameResource("Money", 0) },
-        { "power", new GameResource("Power", 10) },
+        { "palladium", new GameResource("Palladium", 0) },
+        { "helium", new GameResource("Helium", 10) },
         { "alien", new GameResource("Alien", 0) }
     };
 
