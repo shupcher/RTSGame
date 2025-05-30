@@ -19,6 +19,8 @@ public class UIManager : MonoBehaviour
         {
             GameObject display = Instantiate(gameResourceDisplayPrefab, resourcesUIParent);
             display.name = pair.Key;
+            _resourceTexts[pair.Key] = display.transform.Find("Text").GetComponent<Text>();
+            _SetResourceText(pair.Key, pair.Value.Amount);
         }
 
         _buildingPlacer = GetComponent<BuildingPlacer>();
@@ -37,6 +39,15 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private void _SetResourceText(string resource, int value)
+    {
+        _resourceTexts[resource].text = value.ToString();
+    }
+
+    private void UpdateResourceTexts()
+    {
+    
+    }
     private void _AddBuildingButtonListener(Button b, int i)
     {
         //Outside for loop above because as the for loop iterates, the value i would update. We need to call the method in the loop instead so we only get the value of i at the time it is called
