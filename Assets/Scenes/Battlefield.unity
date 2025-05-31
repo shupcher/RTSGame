@@ -527,6 +527,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildingMenu: {fileID: 736067443}
   buildingButtonPrefab: {fileID: 762484957800142190, guid: 6f8806cc1b04f537ba620e1f7b379810, type: 3}
+  resourcesUIParent: {fileID: 5996330852921935342, guid: 930cd34d41bb9cd41a7d4f3e9018f3c0, type: 3}
+  gameResourceDisplayPrefab: {fileID: 4573268911680372919, guid: 930cd34d41bb9cd41a7d4f3e9018f3c0, type: 3}
 --- !u!114 &490710287
 MonoBehaviour:
   m_ObjectHideFlags: 0
