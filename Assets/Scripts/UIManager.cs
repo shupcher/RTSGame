@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     public GameObject gameResourceDisplayPrefab;
 
     private Dictionary<string, Text> _resourceTexts;
+    private Dictionary<string, Button> _buildingButtons;
 
     private void Awake()
     {
@@ -26,6 +27,7 @@ public class UIManager : MonoBehaviour
         _buildingPlacer = GetComponent<BuildingPlacer>();
 
         // create buttons for each building type
+        _buildingButtons = new Dictionary<string, Button>();
         for (int i = 0; i < Globals.BUILDING_DATA.Length; i++)
         {
             GameObject button = GameObject.Instantiate(
@@ -36,6 +38,12 @@ public class UIManager : MonoBehaviour
             button.GetComponentInChildren<Text>().text = code;
             Button b = button.GetComponent<Button>();
             _AddBuildingButtonListener(b, i);
+            _buildingButtons[code] = b;
+
+            if (!Globals.BUILDING_DATA[i].CanBuy())
+            {
+                b.interactable = false; // Disable button if building cannot be bought
+            }
         }
     }
 
@@ -55,5 +63,16 @@ public class UIManager : MonoBehaviour
     {
         //Outside for loop above because as the for loop iterates, the value i would update. We need to call the method in the loop instead so we only get the value of i at the time it is called
         b.onClick.AddListener(() => _buildingPlacer.SelectPlacedBuilding(i));
+    }
+
+    public void CheckBuildingButtons()
+    {
+        foreach (BuildingData data in Globals.BUILDING_DATA)
+        {
+            if (_buildingButtons.TryGetValue(data.Code, out Button button))
+            {
+                button.interactable = data.CanBuy();
+            }
+        }
     }
 }
