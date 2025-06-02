@@ -8,8 +8,16 @@ public class Globals
 
     public static BuildingData[] BUILDING_DATA = new BuildingData[]
     {
-        new BuildingData("House", 100),
-        new BuildingData("Tower", 50)
+        new BuildingData("House", 100, new Dictionary<string, int>()
+        {
+            //Key, value = Resource, amount
+            { "palladium", 125 }
+        }),
+        new BuildingData("Tower", 200, new Dictionary<string, int>()
+        {
+            { "palladium", 200 },
+            { "helium", 50 }
+        })
     };
 
     //Since the layer needs to be represented in binary use bitmasking (a list of all the layers with either a 0 or 1 to represent if they're part of the mask)
