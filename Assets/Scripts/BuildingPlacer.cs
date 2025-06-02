@@ -1,3 +1,4 @@
+using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class BuildingPlacer : MonoBehaviour
@@ -6,7 +7,17 @@ public class BuildingPlacer : MonoBehaviour
     private Ray _ray;
     private RaycastHit _raycastHit;
     private Vector3 _lastPlacementPosition;
+    private UIManager _uiManager;
 
+
+    private void Awake()
+    {
+        _uiManager = GetComponent<UIManager>();
+        if (_uiManager == null)
+        {
+            Debug.LogError("UIManager component not found on BuildingPlacer.");
+        }
+    }
     public void SelectPlacedBuilding(int buildingDataIndex)
     {
         _PreparePlacedBuilding(buildingDataIndex);
@@ -29,7 +40,7 @@ public class BuildingPlacer : MonoBehaviour
 
             _ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             //Casts a ray from the camera to the point clicked and outputs a hit if there is one
-            if (Physics.Raycast(_ray, out _raycastHit, 1000f, Globals.TERRAIN_LAYER_MASK))
+            if (Physics.Raycast(_ray, out _raycastHit, 1000f, Globals.TERRAIN_LAYER_MASK) && _placedBuilding != null)
             {
                 //Moves the phantom building to position of raycast hit
                 _placedBuilding.SetPosition(_raycastHit.point);
@@ -39,11 +50,6 @@ public class BuildingPlacer : MonoBehaviour
                     _placedBuilding.CheckValidPlacement();
                 }
                 _lastPlacementPosition = _raycastHit.point;
-            }
-
-            if (_placedBuilding.HasValidPlacement && Input.GetMouseButtonDown(0))
-            {
-                // place building
             }
         }
     }
@@ -78,6 +84,13 @@ public class BuildingPlacer : MonoBehaviour
     {
         _placedBuilding.Place();
         // keep on building the same building type
-        _PreparePlacedBuilding(_placedBuilding.DataIndex);
+        if (_placedBuilding.CanBuy())
+            _PreparePlacedBuilding(_placedBuilding.DataIndex);
+        else
+            _placedBuilding = null;
+        // update the UI to reflect the new resource amounts
+        _uiManager.UpdateResourceTexts();
+        //update the UI to reflect which buildings can be placed
+        _uiManager.CheckBuildingButtons();
     }
 }

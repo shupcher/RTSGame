@@ -91,13 +91,26 @@ public class Building
     {
         // set placement state
         _placement = BuildingPlacement.FIXED;
+
         // remove "is trigger" flag from box collider to allow
         // for collisions with units
         _transform.GetComponent<BoxCollider>().isTrigger = false;
+
         //Sets material based on placement state
         SetMaterials();
+
+        foreach (KeyValuePair<string, int> pair in _data.Cost)
+        {
+            //Removes the cost of the building from the resource pool
+            Globals.GAME_RESOURCES[pair.Key].AddAmount(-pair.Value);
+        }
     }
 
+    public bool CanBuy()
+    {
+        //Checks if the building can be bought by checking the cost of the building against the current resource pool
+        return _data.CanBuy();
+    }
     public void CheckValidPlacement()
     {
         if (_placement == BuildingPlacement.FIXED) return;
