@@ -40,7 +40,7 @@ public class BuildingPlacer : MonoBehaviour
 
             _ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             //Casts a ray from the camera to the point clicked and outputs a hit if there is one
-            if (Physics.Raycast(_ray, out _raycastHit, 1000f, Globals.TERRAIN_LAYER_MASK))
+            if (Physics.Raycast(_ray, out _raycastHit, 1000f, Globals.TERRAIN_LAYER_MASK) && _placedBuilding != null)
             {
                 //Moves the phantom building to position of raycast hit
                 _placedBuilding.SetPosition(_raycastHit.point);
@@ -50,11 +50,6 @@ public class BuildingPlacer : MonoBehaviour
                     _placedBuilding.CheckValidPlacement();
                 }
                 _lastPlacementPosition = _raycastHit.point;
-            }
-
-            if (_placedBuilding.HasValidPlacement && Input.GetMouseButtonDown(0))
-            {
-                // place building
             }
         }
     }
@@ -90,16 +85,9 @@ public class BuildingPlacer : MonoBehaviour
         _placedBuilding.Place();
         // keep on building the same building type
         if (_placedBuilding.CanBuy())
-        {
             _PreparePlacedBuilding(_placedBuilding.DataIndex);
-        }
         else
-        {
-            // if the building can't be bought, cancel the placement
-            _CancelPlacedBuilding();
-            return;
-        }
-        _PreparePlacedBuilding(_placedBuilding.DataIndex);
+            _placedBuilding = null;
         // update the UI to reflect the new resource amounts
         _uiManager.UpdateResourceTexts();
         //update the UI to reflect which buildings can be placed

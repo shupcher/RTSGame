@@ -70,10 +70,7 @@ public class UIManager : MonoBehaviour
     {
         foreach (BuildingData data in Globals.BUILDING_DATA)
         {
-            if (_buildingButtons.TryGetValue(data.Code, out Button button))
-            {
-                button.interactable = data.CanBuy();
-            }
+            _buildingButtons[data.Code].interactable = data.CanBuy();
         }
     }
 }
