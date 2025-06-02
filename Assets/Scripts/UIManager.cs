@@ -52,7 +52,7 @@ public class UIManager : MonoBehaviour
         _resourceTexts[resource].text = value.ToString();
     }
 
-    private void UpdateResourceTexts()
+    public void UpdateResourceTexts()
     {
         foreach (KeyValuePair<string, GameResource> pair in Globals.GAME_RESOURCES)
         {
@@ -65,6 +65,7 @@ public class UIManager : MonoBehaviour
         b.onClick.AddListener(() => _buildingPlacer.SelectPlacedBuilding(i));
     }
 
+    // Runs through all building buttons and enable/disables appropriately based on the current resource pool
     public void CheckBuildingButtons()
     {
         foreach (BuildingData data in Globals.BUILDING_DATA)

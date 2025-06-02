@@ -1,3 +1,4 @@
+using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class BuildingPlacer : MonoBehaviour
@@ -6,7 +7,17 @@ public class BuildingPlacer : MonoBehaviour
     private Ray _ray;
     private RaycastHit _raycastHit;
     private Vector3 _lastPlacementPosition;
+    private UIManager _uiManager;
 
+
+    private void Awake()
+    {
+        _uiManager = GetComponent<UIManager>();
+        if (_uiManager == null)
+        {
+            Debug.LogError("UIManager component not found on BuildingPlacer.");
+        }
+    }
     public void SelectPlacedBuilding(int buildingDataIndex)
     {
         _PreparePlacedBuilding(buildingDataIndex);
@@ -78,6 +89,20 @@ public class BuildingPlacer : MonoBehaviour
     {
         _placedBuilding.Place();
         // keep on building the same building type
+        if (_placedBuilding.CanBuy())
+        {
+            _PreparePlacedBuilding(_placedBuilding.DataIndex);
+        }
+        else
+        {
+            // if the building can't be bought, cancel the placement
+            _CancelPlacedBuilding();
+            return;
+        }
         _PreparePlacedBuilding(_placedBuilding.DataIndex);
+        // update the UI to reflect the new resource amounts
+        _uiManager.UpdateResourceTexts();
+        //update the UI to reflect which buildings can be placed
+        _uiManager.CheckBuildingButtons();
     }
 }
