@@ -29,6 +29,7 @@ public class UnitsSelection : MonoBehaviour
             _SelectUnitsInDraggingBox();
     }
 
+// Selects units in a rectangle defined by the start position and the current mouse position
     private void _SelectUnitsInDraggingBox()
     {
         Bounds selectionBounds = Utils.GetViewportBounds(
