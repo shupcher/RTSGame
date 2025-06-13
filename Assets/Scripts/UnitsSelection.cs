@@ -16,7 +16,7 @@ public class UnitsSelection : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-     if (_selectUnitsAction.WasPerformedThisFrame())
+        if (_selectUnitsAction.WasPerformedThisFrame())
         {
             _isDraggingMouseBox = true;
             _dragStartPosition = Input.mousePosition;
@@ -24,6 +24,32 @@ public class UnitsSelection : MonoBehaviour
 
         if (_selectUnitsAction.WasReleasedThisFrame())
             _isDraggingMouseBox = false;
+
+        if (_isDraggingMouseBox && _dragStartPosition != Input.mousePosition)
+            _SelectUnitsInDraggingBox();
+    }
+
+    private void _SelectUnitsInDraggingBox()
+    {
+        Bounds selectionBounds = Utils.GetViewportBounds(
+            Camera.main,
+            _dragStartPosition,
+            Input.mousePosition
+        );
+        GameObject[] selectableUnits = GameObject.FindGameObjectsWithTag("Unit");
+        bool inBounds;
+        foreach (GameObject unit in selectableUnits)
+        {
+            inBounds = selectionBounds.Contains(
+                Camera.main.WorldToViewportPoint(unit.transform.position)
+            );
+            if (inBounds)
+            {
+                unit.GetComponent<UnitManager>().Select();
+            }
+            else
+                unit.GetComponent<UnitManager>().Deselect();
+        }
     }
 
     void OnGUI()
