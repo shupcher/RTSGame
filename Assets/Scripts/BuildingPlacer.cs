@@ -1,8 +1,13 @@
+using NUnit.Framework.Internal;
 using TMPro.EditorUtilities;
 using UnityEngine;
+using UnityEngine.InputSystem;
+
 
 public class BuildingPlacer : MonoBehaviour
 {
+    public InputActionAsset actions;
+    private InputAction _placeBuildingAction;
     private Building _placedBuilding = null;
     private Ray _ray;
     private RaycastHit _raycastHit;
@@ -17,6 +22,8 @@ public class BuildingPlacer : MonoBehaviour
         {
             Debug.LogError("UIManager component not found on BuildingPlacer.");
         }
+
+        _placeBuildingAction = actions.FindActionMap("UI").FindAction("Click");
     }
     public void SelectPlacedBuilding(int buildingDataIndex)
     {
@@ -33,7 +40,7 @@ public class BuildingPlacer : MonoBehaviour
                 return;
             }
 
-            if (_placedBuilding.HasValidPlacement && Input.GetMouseButtonDown(0))
+            if (_placedBuilding.HasValidPlacement && _placeBuildingAction.WasReleasedThisFrame())
             {
                 _PlaceBuilding();
             }
