@@ -14,7 +14,6 @@ public class BuildingPlacer : MonoBehaviour
     private Vector3 _lastPlacementPosition;
     private UIManager _uiManager;
 
-
     private void Awake()
     {
         _uiManager = GetComponent<UIManager>();
@@ -22,12 +21,15 @@ public class BuildingPlacer : MonoBehaviour
         {
             Debug.LogError("UIManager component not found on BuildingPlacer.");
         }
-
-        _placeBuildingAction = actions.FindActionMap("UI").FindAction("Click");
     }
     public void SelectPlacedBuilding(int buildingDataIndex)
     {
         _PreparePlacedBuilding(buildingDataIndex);
+    }
+
+    void Start()
+    {
+       _placeBuildingAction = actions.FindActionMap("UI").FindAction("Click"); 
     }
 
     void Update()
