@@ -1,20 +1,25 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class UnitManager : MonoBehaviour
 {
-//Since BuildingManager inherits from UnitManager, selectionCircle needs to be attached to the BuildingManager script in the inspector.
+    //Since BuildingManager inherits from UnitManager, selectionCircle needs to be attached to the BuildingManager script in the inspector
     public GameObject selectionCircle;
-    public InputActionAsset actions;
-    private InputAction _selectUnitsAction;
 
-    private void Start()
+    private void OnMouseDown()
     {
-      _selectUnitsAction = actions.FindActionMap("UI").FindAction("Click");
+        Select(true);
     }
-    public void Select()
+    public void Select() { Select(false); }
+    public void Select(bool clearSelection)
     {
         if (Globals.SELECTED_UNITS.Contains(this)) return;
+        if (clearSelection)
+        {
+            List<UnitManager> selectedUnits = new List<UnitManager>(Globals.SELECTED_UNITS);
+            foreach (UnitManager um in selectedUnits)
+                um.Deselect();
+        }
         Globals.SELECTED_UNITS.Add(this);
         selectionCircle.SetActive(true);
     }
