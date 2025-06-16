@@ -2,7 +2,7 @@ using NUnit.Framework.Internal;
 using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using UnityEngine.EventSystems;
 
 public class BuildingPlacer : MonoBehaviour
 {
@@ -58,7 +58,8 @@ public class BuildingPlacer : MonoBehaviour
                 return;
             }
 
-            if (_placedBuilding.HasValidPlacement && _placeBuildingAction.WasReleasedThisFrame())
+            // Ignore clicks if the pointer is over a UI element
+            if (_placedBuilding.HasValidPlacement && _placeBuildingAction.WasPerformedThisFrame() && !EventSystem.current.IsPointerOverGameObject())
             {
                 _PlaceBuilding();
             }
