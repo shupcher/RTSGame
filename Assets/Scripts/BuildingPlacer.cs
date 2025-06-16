@@ -8,6 +8,7 @@ public class BuildingPlacer : MonoBehaviour
 {
     public InputActionAsset actions;
     private InputAction _placeBuildingAction;
+    private InputAction _cancelBuildingAction;
     private Building _placedBuilding = null;
     private Ray _ray;
     private RaycastHit _raycastHit;
@@ -29,14 +30,29 @@ public class BuildingPlacer : MonoBehaviour
 
     void Start()
     {
-       _placeBuildingAction = actions.FindActionMap("UI").FindAction("Click"); 
+        _placeBuildingAction = actions.FindActionMap("UI").FindAction("Click"); 
+       _cancelBuildingAction = actions.FindActionMap("UI").FindAction("Cancel");
+
+        // Enable the actions
+        _placeBuildingAction.Enable();
+        _cancelBuildingAction.Enable();
+
+        // Initialize the placed building to null
+        _placedBuilding = null;
+        _lastPlacementPosition = Vector3.zero;
+
+        // Check if UIManager is set
+        if (_uiManager == null)
+        {
+            Debug.LogError("UIManager is not set in BuildingPlacer.");
+        }
     }
 
     void Update()
     {
         if (_placedBuilding != null)
         {
-            if (Input.GetKeyUp(KeyCode.Escape))
+            if (_cancelBuildingAction.WasPerformedThisFrame())
             {
                 _CancelPlacedBuilding();
                 return;
@@ -47,7 +63,7 @@ public class BuildingPlacer : MonoBehaviour
                 _PlaceBuilding();
             }
 
-            _ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            _ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
             //Casts a ray from the camera to the point clicked and outputs a hit if there is one
             if (Physics.Raycast(_ray, out _raycastHit, 1000f, Globals.TERRAIN_LAYER_MASK) && _placedBuilding != null)
             {
