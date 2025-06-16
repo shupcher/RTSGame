@@ -56,7 +56,7 @@ public class Building
         if (placement == BuildingPlacement.VALID)
         {
             Material refMaterial = Resources.Load("Materials/Valid") as Material;
-            Debug.Log("Loaded material: " + refMaterial);
+            //Debug.Log("Loaded material: " + refMaterial);
             materials = new List<Material>();
             //Iterates over all materials to replace them all with the same one
             for (int i = 0; i < _materials.Count; i++)
@@ -68,7 +68,7 @@ public class Building
         else if (placement == BuildingPlacement.INVALID)
         {
             Material refMaterial = Resources.Load("Materials/Invalid") as Material;
-            Debug.Log("Loaded material: " + refMaterial);
+            //Debug.Log("Loaded material: " + refMaterial);
             materials = new List<Material>();
             for (int i = 0; i < _materials.Count; i++)
             {

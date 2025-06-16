@@ -33,4 +33,6 @@ public class Globals
         { "alien", new GameResource("Alien", 0) }
     };
 
+     public static List<UnitManager> SELECTED_UNITS = new List<UnitManager>();
+
 }

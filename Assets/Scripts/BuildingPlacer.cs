@@ -1,14 +1,19 @@
+using NUnit.Framework.Internal;
 using TMPro.EditorUtilities;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class BuildingPlacer : MonoBehaviour
 {
+    public InputActionAsset actions;
+    private InputAction _placeBuildingAction;
+    private InputAction _cancelBuildingAction;
     private Building _placedBuilding = null;
     private Ray _ray;
     private RaycastHit _raycastHit;
     private Vector3 _lastPlacementPosition;
     private UIManager _uiManager;
-
 
     private void Awake()
     {
@@ -23,22 +28,43 @@ public class BuildingPlacer : MonoBehaviour
         _PreparePlacedBuilding(buildingDataIndex);
     }
 
+    void Start()
+    {
+        _placeBuildingAction = actions.FindActionMap("UI").FindAction("Click"); 
+       _cancelBuildingAction = actions.FindActionMap("UI").FindAction("Cancel");
+
+        // Enable the actions
+        _placeBuildingAction.Enable();
+        _cancelBuildingAction.Enable();
+
+        // Initialize the placed building to null
+        _placedBuilding = null;
+        _lastPlacementPosition = Vector3.zero;
+
+        // Check if UIManager is set
+        if (_uiManager == null)
+        {
+            Debug.LogError("UIManager is not set in BuildingPlacer.");
+        }
+    }
+
     void Update()
     {
         if (_placedBuilding != null)
         {
-            if (Input.GetKeyUp(KeyCode.Escape))
+            if (_cancelBuildingAction.WasPerformedThisFrame())
             {
                 _CancelPlacedBuilding();
                 return;
             }
 
-            if (_placedBuilding.HasValidPlacement && Input.GetMouseButtonDown(0))
+            // Ignore clicks if the pointer is over a UI element
+            if (_placedBuilding.HasValidPlacement && _placeBuildingAction.WasPerformedThisFrame() && !EventSystem.current.IsPointerOverGameObject())
             {
                 _PlaceBuilding();
             }
 
-            _ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            _ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
             //Casts a ray from the camera to the point clicked and outputs a hit if there is one
             if (Physics.Raycast(_ray, out _raycastHit, 1000f, Globals.TERRAIN_LAYER_MASK) && _placedBuilding != null)
             {
