@@ -8,7 +8,13 @@ public class UnitManager : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Select(true);
+        if (IsActive())
+            Select(true);
+    }
+
+    protected virtual bool IsActive()
+    {
+        return true; // Default implementation, can be overridden
     }
     public void Select() { Select(false); }
     public void Select(bool clearSelection)
