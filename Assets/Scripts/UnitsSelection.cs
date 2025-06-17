@@ -3,33 +3,48 @@ using UnityEngine.InputSystem;
 
 public class UnitsSelection : MonoBehaviour
 {
-    public InputActionAsset actions;
+    private DefaultControls _defaultControls;
     private InputAction _selectUnitsAction;
     private bool _isDraggingMouseBox = false;
     private Vector3 _dragStartPosition;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    private void Awake()
     {
-        _selectUnitsAction = actions.FindActionMap("UI").FindAction("Click");
+        _defaultControls = new DefaultControls();
     }
 
+    private void OnEnable()
+    {
+        _defaultControls.UI.Click.performed += OnPress;
+        _defaultControls.UI.Click.canceled += OnRelease;
+        _defaultControls.UI.Click.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _defaultControls.UI.Click.Disable();
+        _defaultControls.UI.Cancel.Disable();
+    }
+
+    void OnPress(InputAction.CallbackContext context)
+    {
+        _isDraggingMouseBox = true;
+        _dragStartPosition = Mouse.current.position.ReadValue();
+    }
+
+    void OnRelease(InputAction.CallbackContext context)
+    {
+        _isDraggingMouseBox = false;
+    }
     // Update is called once per frame
     void Update()
     {
-        if (_selectUnitsAction.WasPerformedThisFrame())
-        {
-            _isDraggingMouseBox = true;
-            _dragStartPosition = Input.mousePosition;
-        }
-
-        if (_selectUnitsAction.WasReleasedThisFrame())
-            _isDraggingMouseBox = false;
 
         if (_isDraggingMouseBox && _dragStartPosition != Input.mousePosition)
             _SelectUnitsInDraggingBox();
     }
 
-// Selects units in a rectangle defined by the start position and the current mouse position
+    // Selects units in a rectangle defined by the start position and the current mouse position
     private void _SelectUnitsInDraggingBox()
     {
         Bounds selectionBounds = Utils.GetViewportBounds(
@@ -58,7 +73,7 @@ public class UnitsSelection : MonoBehaviour
         if (_isDraggingMouseBox)
         {
             // Create a rect from both mouse positions
-            var rect = Utils.GetScreenRect(_dragStartPosition, Input.mousePosition);
+            var rect = Utils.GetScreenRect(_dragStartPosition, Mouse.current.position.ReadValue());
             Utils.DrawScreenRect(rect, new Color(0.5f, 1f, 0.4f, 0.2f));
             Utils.DrawScreenRectBorder(rect, 1, new Color(0.5f, 1f, 0.4f));
         }
