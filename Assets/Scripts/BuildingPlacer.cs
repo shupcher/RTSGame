@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 public class BuildingPlacer : MonoBehaviour
 {
-    public InputActionAsset actions;
+    private DefaultControls _defaultControls;
     private InputAction _placeBuildingAction;
     private InputAction _cancelBuildingAction;
     private Building _placedBuilding = null;
@@ -22,21 +22,29 @@ public class BuildingPlacer : MonoBehaviour
         {
             Debug.LogError("UIManager component not found on BuildingPlacer.");
         }
-    }
-    public void SelectPlacedBuilding(int buildingDataIndex)
-    {
-        _PreparePlacedBuilding(buildingDataIndex);
+
+        _defaultControls =new DefaultControls();
     }
 
-    void Start()
+    private void OnEnable()
     {
-        _placeBuildingAction = actions.FindActionMap("UI").FindAction("Click"); 
-       _cancelBuildingAction = actions.FindActionMap("UI").FindAction("Cancel");
-
-        // Enable the actions
+        _placeBuildingAction = _defaultControls.UI.Click;
+        _defaultControls.UI.Click.Enable();
+        _cancelBuildingAction = _defaultControls.UI.Cancel;
+        _defaultControls.UI.Cancel.Enable();
         _placeBuildingAction.Enable();
         _cancelBuildingAction.Enable();
+    }
 
+    private void OnDisable()
+    {
+        _placeBuildingAction.Disable();
+        _cancelBuildingAction.Disable();
+        _defaultControls.UI.Click.Disable();
+        _defaultControls.UI.Cancel.Disable();
+    }
+    void Start()
+    {
         // Initialize the placed building to null
         _placedBuilding = null;
         _lastPlacementPosition = Vector3.zero;
@@ -78,6 +86,11 @@ public class BuildingPlacer : MonoBehaviour
                 _lastPlacementPosition = _raycastHit.point;
             }
         }
+    }
+
+    public void SelectPlacedBuilding(int buildingDataIndex)
+    {
+        _PreparePlacedBuilding(buildingDataIndex);
     }
 
     void _PreparePlacedBuilding(int buildingDataIndex)
