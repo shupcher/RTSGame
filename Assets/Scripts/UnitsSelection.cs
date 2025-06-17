@@ -39,9 +39,12 @@ public class UnitsSelection : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        if (_isDraggingMouseBox && _dragStartPosition != Input.mousePosition)
+        if (_isDraggingMouseBox)
+        {
+            // Update the dragging box selection
             _SelectUnitsInDraggingBox();
+        }
+
     }
 
     // Selects units in a rectangle defined by the start position and the current mouse position
