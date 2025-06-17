@@ -53,7 +53,7 @@ public class UnitsSelection : MonoBehaviour
         Bounds selectionBounds = Utils.GetViewportBounds(
             Camera.main,
             _dragStartPosition,
-            Input.mousePosition
+            Mouse.current.position.ReadValue()
         );
         GameObject[] selectableUnits = GameObject.FindGameObjectsWithTag("Unit");
         bool inBounds;
