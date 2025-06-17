@@ -44,7 +44,7 @@ public static class Utils
         //Calculate the rectangle from the two screen positions
         var topLeft = Vector3.Min(screenPosition1, screenPosition2);
         var bottomRight = Vector3.Max(screenPosition1, screenPosition2);
-        //Create a Rect from the top left and bottom right corners
+        //Create a Rect from the top left and bottom right corner
         return Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
     }
 

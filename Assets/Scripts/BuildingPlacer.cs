@@ -3,17 +3,17 @@ using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using System;
 
 public class BuildingPlacer : MonoBehaviour
 {
-    public InputActionAsset actions;
-    private InputAction _placeBuildingAction;
-    private InputAction _cancelBuildingAction;
+    private DefaultControls _defaultControls;
     private Building _placedBuilding = null;
     private Ray _ray;
     private RaycastHit _raycastHit;
     private Vector3 _lastPlacementPosition;
     private UIManager _uiManager;
+    private bool overUI;
 
     private void Awake()
     {
@@ -22,21 +22,25 @@ public class BuildingPlacer : MonoBehaviour
         {
             Debug.LogError("UIManager component not found on BuildingPlacer.");
         }
-    }
-    public void SelectPlacedBuilding(int buildingDataIndex)
-    {
-        _PreparePlacedBuilding(buildingDataIndex);
+
+        _defaultControls = new DefaultControls();
     }
 
+    private void OnEnable()
+    {
+        _defaultControls.UI.Click.performed += OnClick;
+        _defaultControls.UI.Click.Enable();
+        _defaultControls.UI.Cancel.performed += OnCancel;
+        _defaultControls.UI.Cancel.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _defaultControls.UI.Click.Disable();
+        _defaultControls.UI.Cancel.Disable();
+    }
     void Start()
     {
-        _placeBuildingAction = actions.FindActionMap("UI").FindAction("Click"); 
-       _cancelBuildingAction = actions.FindActionMap("UI").FindAction("Cancel");
-
-        // Enable the actions
-        _placeBuildingAction.Enable();
-        _cancelBuildingAction.Enable();
-
         // Initialize the placed building to null
         _placedBuilding = null;
         _lastPlacementPosition = Vector3.zero;
@@ -48,36 +52,48 @@ public class BuildingPlacer : MonoBehaviour
         }
     }
 
-    void Update()
+    void OnClick(InputAction.CallbackContext context)
     {
         if (_placedBuilding != null)
         {
-            if (_cancelBuildingAction.WasPerformedThisFrame())
-            {
-                _CancelPlacedBuilding();
-                return;
-            }
-
             // Ignore clicks if the pointer is over a UI element
-            if (_placedBuilding.HasValidPlacement && _placeBuildingAction.WasPerformedThisFrame() && !EventSystem.current.IsPointerOverGameObject())
+            if (_placedBuilding.HasValidPlacement && !overUI)
             {
                 _PlaceBuilding();
             }
-
-            _ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-            //Casts a ray from the camera to the point clicked and outputs a hit if there is one
-            if (Physics.Raycast(_ray, out _raycastHit, 1000f, Globals.TERRAIN_LAYER_MASK) && _placedBuilding != null)
-            {
-                //Moves the phantom building to position of raycast hit
-                _placedBuilding.SetPosition(_raycastHit.point);
-                //If it's a new spot, check that the new spot is valid
-                if (_lastPlacementPosition != _raycastHit.point)
-                {
-                    _placedBuilding.CheckValidPlacement();
-                }
-                _lastPlacementPosition = _raycastHit.point;
-            }
         }
+    }
+
+    void OnCancel(InputAction.CallbackContext context)
+    {
+        if (_placedBuilding != null)
+        {
+            _CancelPlacedBuilding();
+        }
+    }
+
+    void Update()
+    {
+        _ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+        //Casts a ray from the camera to the point clicked and outputs a hit if there is one
+        if (Physics.Raycast(_ray, out _raycastHit, 1000f, Globals.TERRAIN_LAYER_MASK) && _placedBuilding != null)
+        {
+            //Moves the phantom building to position of raycast hit
+            _placedBuilding.SetPosition(_raycastHit.point);
+            //If it's a new spot, check that the new spot is valid
+            if (_lastPlacementPosition != _raycastHit.point)
+            {
+                _placedBuilding.CheckValidPlacement();
+            }
+            _lastPlacementPosition = _raycastHit.point;
+        }
+// Check if the pointer is over a UI element
+        overUI = EventSystem.current.IsPointerOverGameObject();
+    }
+
+    public void SelectPlacedBuilding(int buildingDataIndex)
+    {
+        _PreparePlacedBuilding(buildingDataIndex);
     }
 
     void _PreparePlacedBuilding(int buildingDataIndex)
