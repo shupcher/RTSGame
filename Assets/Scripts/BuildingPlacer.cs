@@ -3,17 +3,17 @@ using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using System;
 
 public class BuildingPlacer : MonoBehaviour
 {
     private DefaultControls _defaultControls;
-    private InputAction _placeBuildingAction;
-    private InputAction _cancelBuildingAction;
     private Building _placedBuilding = null;
     private Ray _ray;
     private RaycastHit _raycastHit;
     private Vector3 _lastPlacementPosition;
     private UIManager _uiManager;
+    private bool overUI;
 
     private void Awake()
     {
@@ -23,23 +23,19 @@ public class BuildingPlacer : MonoBehaviour
             Debug.LogError("UIManager component not found on BuildingPlacer.");
         }
 
-        _defaultControls =new DefaultControls();
+        _defaultControls = new DefaultControls();
     }
 
     private void OnEnable()
     {
-        _placeBuildingAction = _defaultControls.UI.Click;
+        _defaultControls.UI.Click.performed += OnClick;
         _defaultControls.UI.Click.Enable();
-        _cancelBuildingAction = _defaultControls.UI.Cancel;
+        _defaultControls.UI.Cancel.performed += OnCancel;
         _defaultControls.UI.Cancel.Enable();
-        _placeBuildingAction.Enable();
-        _cancelBuildingAction.Enable();
     }
 
     private void OnDisable()
     {
-        _placeBuildingAction.Disable();
-        _cancelBuildingAction.Disable();
         _defaultControls.UI.Click.Disable();
         _defaultControls.UI.Cancel.Disable();
     }
@@ -56,36 +52,43 @@ public class BuildingPlacer : MonoBehaviour
         }
     }
 
-    void Update()
+    void OnClick(InputAction.CallbackContext context)
     {
         if (_placedBuilding != null)
         {
-            if (_cancelBuildingAction.WasPerformedThisFrame())
-            {
-                _CancelPlacedBuilding();
-                return;
-            }
-
             // Ignore clicks if the pointer is over a UI element
-            if (_placedBuilding.HasValidPlacement && _placeBuildingAction.WasPerformedThisFrame() && !EventSystem.current.IsPointerOverGameObject())
+            if (_placedBuilding.HasValidPlacement && !overUI)
             {
                 _PlaceBuilding();
             }
-
-            _ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-            //Casts a ray from the camera to the point clicked and outputs a hit if there is one
-            if (Physics.Raycast(_ray, out _raycastHit, 1000f, Globals.TERRAIN_LAYER_MASK) && _placedBuilding != null)
-            {
-                //Moves the phantom building to position of raycast hit
-                _placedBuilding.SetPosition(_raycastHit.point);
-                //If it's a new spot, check that the new spot is valid
-                if (_lastPlacementPosition != _raycastHit.point)
-                {
-                    _placedBuilding.CheckValidPlacement();
-                }
-                _lastPlacementPosition = _raycastHit.point;
-            }
         }
+    }
+
+    void OnCancel(InputAction.CallbackContext context)
+    {
+        if (_placedBuilding != null)
+        {
+            _CancelPlacedBuilding();
+        }
+    }
+
+    void Update()
+    {
+        _ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+        //Casts a ray from the camera to the point clicked and outputs a hit if there is one
+        if (Physics.Raycast(_ray, out _raycastHit, 1000f, Globals.TERRAIN_LAYER_MASK) && _placedBuilding != null)
+        {
+            //Moves the phantom building to position of raycast hit
+            _placedBuilding.SetPosition(_raycastHit.point);
+            //If it's a new spot, check that the new spot is valid
+            if (_lastPlacementPosition != _raycastHit.point)
+            {
+                _placedBuilding.CheckValidPlacement();
+            }
+            _lastPlacementPosition = _raycastHit.point;
+        }
+// Check if the pointer is over a UI element
+        overUI = EventSystem.current.IsPointerOverGameObject();
     }
 
     public void SelectPlacedBuilding(int buildingDataIndex)
