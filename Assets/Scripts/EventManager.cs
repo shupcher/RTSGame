@@ -32,6 +32,7 @@ public class EventManager : MonoBehaviour
         if (_events == null)
         {
             _events = new Dictionary<string, UnityEvent>();
+            _typedEvents = new Dictionary<string, CustomEvent>();
         }
     }
 

@@ -47,12 +47,24 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        EventManager.AddListener("UpdateResourceTexts", _OnUpdateResourceTexts);
+        EventManager.AddListener("CheckBuildingButtons", _OnCheckBuildingButtons);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.RemoveListener("UpdateResourceTexts", _OnUpdateResourceTexts);
+        EventManager.RemoveListener("CheckBuildingButtons", _OnCheckBuildingButtons);
+    }
+
     private void _SetResourceText(string resource, int value)
     {
         _resourceTexts[resource].text = value.ToString();
     }
 
-    public void UpdateResourceTexts()
+    private void _OnUpdateResourceTexts()
     {
         foreach (KeyValuePair<string, GameResource> pair in Globals.GAME_RESOURCES)
         {
@@ -66,7 +78,7 @@ public class UIManager : MonoBehaviour
     }
 
     // Runs through all building buttons and enable/disables appropriately based on the current resource pool
-    public void CheckBuildingButtons()
+    private void _OnCheckBuildingButtons()
     {
         foreach (BuildingData data in Globals.BUILDING_DATA)
         {

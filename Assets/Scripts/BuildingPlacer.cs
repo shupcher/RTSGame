@@ -131,8 +131,8 @@ public class BuildingPlacer : MonoBehaviour
         else
             _placedBuilding = null;
         // update the UI to reflect the new resource amounts
-        _uiManager.UpdateResourceTexts();
+        EventManager.TriggerEvent("UpdateResourceTexts");
         //update the UI to reflect which buildings can be placed
-        _uiManager.CheckBuildingButtons();
+        EventManager.TriggerEvent("CHeckBuildingButtons");
     }
 }
