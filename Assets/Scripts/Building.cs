@@ -41,9 +41,7 @@ public class Building
         foreach (Material material in _transform.Find("Mesh").GetComponentInChildren<MeshRenderer>().materials)
         {
             _materials.Add(new Material(material));
-            var renderer = _transform.Find("Mesh").GetComponentInChildren<MeshRenderer>();
-            Debug.Log("Initial material count: " + renderer.materials.Length);
-
+            //var renderer = _transform.Find("Mesh").GetComponentInChildren<MeshRenderer>();
         }
         SetMaterials();
     }

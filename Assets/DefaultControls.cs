@@ -116,6 +116,15 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MultiSelect"",
+                    ""type"": ""Button"",
+                    ""id"": ""47037327-c5bb-4a94-815d-67a68af4e1f2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -536,6 +545,17 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
                     ""action"": ""TrackedDeviceOrientation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ca056781-9d9f-4e1f-9114-a8621cf83610"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MultiSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -615,6 +635,7 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        m_UI_MultiSelect = m_UI.FindAction("MultiSelect", throwIfNotFound: true);
     }
 
     ~@DefaultControls()
@@ -691,6 +712,7 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_ScrollWheel;
     private readonly InputAction m_UI_TrackedDevicePosition;
     private readonly InputAction m_UI_TrackedDeviceOrientation;
+    private readonly InputAction m_UI_MultiSelect;
     public struct UIActions
     {
         private @DefaultControls m_Wrapper;
@@ -705,6 +727,7 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
         public InputAction @ScrollWheel => m_Wrapper.m_UI_ScrollWheel;
         public InputAction @TrackedDevicePosition => m_Wrapper.m_UI_TrackedDevicePosition;
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
+        public InputAction @MultiSelect => m_Wrapper.m_UI_MultiSelect;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -744,6 +767,9 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
             @TrackedDeviceOrientation.started += instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.performed += instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.canceled += instance.OnTrackedDeviceOrientation;
+            @MultiSelect.started += instance.OnMultiSelect;
+            @MultiSelect.performed += instance.OnMultiSelect;
+            @MultiSelect.canceled += instance.OnMultiSelect;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -778,6 +804,9 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
             @TrackedDeviceOrientation.started -= instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.performed -= instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.canceled -= instance.OnTrackedDeviceOrientation;
+            @MultiSelect.started -= instance.OnMultiSelect;
+            @MultiSelect.performed -= instance.OnMultiSelect;
+            @MultiSelect.canceled -= instance.OnMultiSelect;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -852,5 +881,6 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
         void OnScrollWheel(InputAction.CallbackContext context);
         void OnTrackedDevicePosition(InputAction.CallbackContext context);
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+        void OnMultiSelect(InputAction.CallbackContext context);
     }
 }

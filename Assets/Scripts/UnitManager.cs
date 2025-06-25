@@ -10,9 +10,14 @@ public class UnitManager : MonoBehaviour
     private Ray _ray;
     private RaycastHit _raycastHit;
 
+    private UnitsSelection _unitsSelection;
+
+    private bool multiSelect = false;
+
     private void Awake()
     {
         _defaultControls = new DefaultControls();
+        _unitsSelection = GameObject.Find("GAME").GetComponent<UnitsSelection>();
     }
 
     private void Update()
@@ -24,22 +29,48 @@ public class UnitManager : MonoBehaviour
     {
         _defaultControls.UI.Click.canceled += OnClick;
         _defaultControls.UI.Click.Enable();
+        _defaultControls.UI.MultiSelect.started += OnMultiSelect;
+        _defaultControls.UI.MultiSelect.canceled += OnMultiSelectEnd;
+        _defaultControls.UI.MultiSelect.Enable();
     }
 
     private void OnDisable()
     {
         _defaultControls.UI.Click.Disable();
         _defaultControls.UI.Click.canceled -= OnClick;
+        _defaultControls.UI.MultiSelect.Disable();
     }
     void OnClick(InputAction.CallbackContext context)
     {
+        Debug.Log("multiSelect state: " + multiSelect);
         if (Physics.Raycast(_ray, out _raycastHit, 1000f) &&
         _raycastHit.collider.gameObject == gameObject)
         {
-            Debug.Log("Unit clicked: " + gameObject.name);
-            if (IsActive())
-                Select(true);
+            if (!multiSelect)
+            {
+                Debug.Log("Unit clicked: " + gameObject.name);
+                if (IsActive())
+                    Select(true);
+            }
+            else
+            {
+                Debug.Log("Unit clicked with multi-select: " + gameObject.name);
+                if (IsActive())
+                    Select(false);
+            }
         }
+    }
+
+    void OnMultiSelect(InputAction.CallbackContext context)
+    {
+        multiSelect = true;
+        _unitsSelection.enabled = false;
+    }
+
+    void OnMultiSelectEnd(InputAction.CallbackContext context)
+    {
+        multiSelect = false;
+        _unitsSelection.enabled = true;
     }
 
     protected virtual bool IsActive()
@@ -49,16 +80,18 @@ public class UnitManager : MonoBehaviour
     public void Select() { Select(false); }
     public void Select(bool clearSelection)
     {
-        Debug.Log("Selecting unit: " + gameObject.name);
+        Debug.Log($"Selecting unit: {gameObject.name}, clearSelection: {clearSelection}");
         if (Globals.SELECTED_UNITS.Contains(this)) return;
         if (clearSelection)
         {
+            Debug.Log("Selection cleared");
             List<UnitManager> selectedUnits = new List<UnitManager>(Globals.SELECTED_UNITS);
             foreach (UnitManager um in selectedUnits)
                 um.Deselect();
         }
         Globals.SELECTED_UNITS.Add(this);
         selectionCircle.SetActive(true);
+        Debug.Log("Current selected units: " + string.Join(", ", Globals.SELECTED_UNITS));
     }
 
     public void Deselect()
