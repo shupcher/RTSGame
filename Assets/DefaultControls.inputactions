@@ -103,6 +103,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "MouseHold",
+                    "type": "Button",
+                    "id": "53f4c989-c7ec-4439-bc32-77fa4afb7079",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Hold",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -532,6 +541,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "MultiSelect",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cf1e3494-abcf-4d90-807e-b945d101da5f",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseHold",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

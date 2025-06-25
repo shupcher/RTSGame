@@ -42,23 +42,30 @@ public class UnitManager : MonoBehaviour
     }
     void OnClick(InputAction.CallbackContext context)
     {
-        Debug.Log("multiSelect state: " + multiSelect);
+        Debug.Log(UnitsSelection.DragJustReleased);
+        if (UnitsSelection.DragJustReleased)
+            return; // Ignore clicks if the mouse drag just ended
         if (Physics.Raycast(_ray, out _raycastHit, 1000f) &&
         _raycastHit.collider.gameObject == gameObject)
         {
             if (!multiSelect)
             {
-                Debug.Log("Unit clicked: " + gameObject.name);
                 if (IsActive())
                     Select(true);
             }
             else
             {
-                Debug.Log("Unit clicked with multi-select: " + gameObject.name);
                 if (IsActive())
                     Select(false);
             }
         }
+
+        else if (!(_raycastHit.collider.gameObject.tag == "Unit"))
+        {
+            Deselect();
+            Debug.Log("Deselect() called");
+        }
+        Debug.Log("Current selected units: " + string.Join(", ", Globals.SELECTED_UNITS));
     }
 
     void OnMultiSelect(InputAction.CallbackContext context)
@@ -80,8 +87,7 @@ public class UnitManager : MonoBehaviour
     public void Select() { Select(false); }
     public void Select(bool clearSelection)
     {
-        Debug.Log($"Selecting unit: {gameObject.name}, clearSelection: {clearSelection}");
-        if (Globals.SELECTED_UNITS.Contains(this)) return;
+        //if (Globals.SELECTED_UNITS.Contains(this)) return;
         if (clearSelection)
         {
             Debug.Log("Selection cleared");
@@ -91,7 +97,6 @@ public class UnitManager : MonoBehaviour
         }
         Globals.SELECTED_UNITS.Add(this);
         selectionCircle.SetActive(true);
-        Debug.Log("Current selected units: " + string.Join(", ", Globals.SELECTED_UNITS));
     }
 
     public void Deselect()

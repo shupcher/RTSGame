@@ -4,9 +4,10 @@ using UnityEngine.InputSystem;
 public class UnitsSelection : MonoBehaviour
 {
     private DefaultControls _defaultControls;
-    private InputAction _selectUnitsAction;
     private bool _isDraggingMouseBox = false;
     private Vector3 _dragStartPosition;
+    public static bool DragJustReleased = false;
+    public bool wasHeld = false;
 
     private void Awake()
     {
@@ -15,18 +16,17 @@ public class UnitsSelection : MonoBehaviour
 
     private void OnEnable()
     {
-        _defaultControls.UI.Click.performed += OnPress;
-        _defaultControls.UI.Click.canceled += OnRelease;
-        _defaultControls.UI.Click.Enable();
+        _defaultControls.UI.MouseHold.performed += OnHold;
+        _defaultControls.UI.MouseHold.canceled += OnRelease;
+        _defaultControls.UI.MouseHold.Enable();
     }
 
     private void OnDisable()
     {
-        _defaultControls.UI.Click.Disable();
-        _defaultControls.UI.Cancel.Disable();
+        _defaultControls.UI.MouseHold.Disable();
     }
 
-    void OnPress(InputAction.CallbackContext context)
+    void OnHold(InputAction.CallbackContext context)
     {
         _isDraggingMouseBox = true;
         _dragStartPosition = Mouse.current.position.ReadValue();
@@ -34,7 +34,12 @@ public class UnitsSelection : MonoBehaviour
 
     void OnRelease(InputAction.CallbackContext context)
     {
+        if (!_isDraggingMouseBox)
+            return; // Ignore if not button not held long enough to trigger dragging
         _isDraggingMouseBox = false;
+        DragJustReleased = true;
+        // Runs the selection logic once when the mouse button is released
+        _SelectUnitsInDraggingBox();
     }
     // Update is called once per frame
     void Update()
@@ -45,6 +50,8 @@ public class UnitsSelection : MonoBehaviour
             _SelectUnitsInDraggingBox();
         }
 
+        if (DragJustReleased)
+            DragJustReleased = false;
     }
 
     // Selects units in a rectangle defined by the start position and the current mouse position

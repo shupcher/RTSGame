@@ -125,6 +125,15 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MouseHold"",
+                    ""type"": ""Button"",
+                    ""id"": ""53f4c989-c7ec-4439-bc32-77fa4afb7079"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Hold"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -556,6 +565,17 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
                     ""action"": ""MultiSelect"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cf1e3494-abcf-4d90-807e-b945d101da5f"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseHold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -636,6 +656,7 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_UI_MultiSelect = m_UI.FindAction("MultiSelect", throwIfNotFound: true);
+        m_UI_MouseHold = m_UI.FindAction("MouseHold", throwIfNotFound: true);
     }
 
     ~@DefaultControls()
@@ -713,6 +734,7 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_TrackedDevicePosition;
     private readonly InputAction m_UI_TrackedDeviceOrientation;
     private readonly InputAction m_UI_MultiSelect;
+    private readonly InputAction m_UI_MouseHold;
     public struct UIActions
     {
         private @DefaultControls m_Wrapper;
@@ -728,6 +750,7 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
         public InputAction @TrackedDevicePosition => m_Wrapper.m_UI_TrackedDevicePosition;
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
         public InputAction @MultiSelect => m_Wrapper.m_UI_MultiSelect;
+        public InputAction @MouseHold => m_Wrapper.m_UI_MouseHold;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -770,6 +793,9 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
             @MultiSelect.started += instance.OnMultiSelect;
             @MultiSelect.performed += instance.OnMultiSelect;
             @MultiSelect.canceled += instance.OnMultiSelect;
+            @MouseHold.started += instance.OnMouseHold;
+            @MouseHold.performed += instance.OnMouseHold;
+            @MouseHold.canceled += instance.OnMouseHold;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -807,6 +833,9 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
             @MultiSelect.started -= instance.OnMultiSelect;
             @MultiSelect.performed -= instance.OnMultiSelect;
             @MultiSelect.canceled -= instance.OnMultiSelect;
+            @MouseHold.started -= instance.OnMouseHold;
+            @MouseHold.performed -= instance.OnMouseHold;
+            @MouseHold.canceled -= instance.OnMouseHold;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -882,5 +911,6 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
         void OnTrackedDevicePosition(InputAction.CallbackContext context);
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
         void OnMultiSelect(InputAction.CallbackContext context);
+        void OnMouseHold(InputAction.CallbackContext context);
     }
 }
