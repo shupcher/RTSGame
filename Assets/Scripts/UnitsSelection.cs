@@ -3,39 +3,64 @@ using UnityEngine.InputSystem;
 
 public class UnitsSelection : MonoBehaviour
 {
-    public InputActionAsset actions;
-    private InputAction _selectUnitsAction;
+    private DefaultControls _defaultControls;
     private bool _isDraggingMouseBox = false;
     private Vector3 _dragStartPosition;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static bool DragJustReleased = false;
+    public bool wasHeld = false;
+
+    private void Awake()
     {
-        _selectUnitsAction = actions.FindActionMap("UI").FindAction("Click");
+        _defaultControls = new DefaultControls();
     }
 
+    private void OnEnable()
+    {
+        _defaultControls.UI.MouseHold.performed += OnHold;
+        _defaultControls.UI.MouseHold.canceled += OnRelease;
+        _defaultControls.UI.MouseHold.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _defaultControls.UI.MouseHold.Disable();
+    }
+
+    void OnHold(InputAction.CallbackContext context)
+    {
+        _isDraggingMouseBox = true;
+        _dragStartPosition = Mouse.current.position.ReadValue();
+    }
+
+    void OnRelease(InputAction.CallbackContext context)
+    {
+        if (!_isDraggingMouseBox)
+            return; // Ignore if not button not held long enough to trigger dragging
+        _isDraggingMouseBox = false;
+        DragJustReleased = true;
+        // Runs the selection logic once when the mouse button is released
+        _SelectUnitsInDraggingBox();
+    }
     // Update is called once per frame
     void Update()
     {
-        if (_selectUnitsAction.WasPerformedThisFrame())
+        if (_isDraggingMouseBox)
         {
-            _isDraggingMouseBox = true;
-            _dragStartPosition = Input.mousePosition;
+            // Update the dragging box selection
+            _SelectUnitsInDraggingBox();
         }
 
-        if (_selectUnitsAction.WasReleasedThisFrame())
-            _isDraggingMouseBox = false;
-
-        if (_isDraggingMouseBox && _dragStartPosition != Input.mousePosition)
-            _SelectUnitsInDraggingBox();
+        if (DragJustReleased)
+            DragJustReleased = false;
     }
 
-// Selects units in a rectangle defined by the start position and the current mouse position
+    // Selects units in a rectangle defined by the start position and the current mouse position
     private void _SelectUnitsInDraggingBox()
     {
         Bounds selectionBounds = Utils.GetViewportBounds(
             Camera.main,
             _dragStartPosition,
-            Input.mousePosition
+            Mouse.current.position.ReadValue()
         );
         GameObject[] selectableUnits = GameObject.FindGameObjectsWithTag("Unit");
         bool inBounds;
@@ -58,7 +83,7 @@ public class UnitsSelection : MonoBehaviour
         if (_isDraggingMouseBox)
         {
             // Create a rect from both mouse positions
-            var rect = Utils.GetScreenRect(_dragStartPosition, Input.mousePosition);
+            var rect = Utils.GetScreenRect(_dragStartPosition, Mouse.current.position.ReadValue());
             Utils.DrawScreenRect(rect, new Color(0.5f, 1f, 0.4f, 0.2f));
             Utils.DrawScreenRectBorder(rect, 1, new Color(0.5f, 1f, 0.4f));
         }
