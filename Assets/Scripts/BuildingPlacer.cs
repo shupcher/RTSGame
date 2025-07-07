@@ -14,6 +14,7 @@ public class BuildingPlacer : MonoBehaviour
     private Vector3 _lastPlacementPosition;
     private UIManager _uiManager;
     private bool overUI;
+    public static bool BuildingJustPlaced = false;
 
     private void Awake()
     {
@@ -28,7 +29,7 @@ public class BuildingPlacer : MonoBehaviour
 
     private void OnEnable()
     {
-        _defaultControls.UI.Click.performed += OnClick;
+        _defaultControls.UI.Click.started += OnClick;
         _defaultControls.UI.Click.Enable();
         _defaultControls.UI.Cancel.performed += OnCancel;
         _defaultControls.UI.Cancel.Enable();
@@ -87,8 +88,12 @@ public class BuildingPlacer : MonoBehaviour
             }
             _lastPlacementPosition = _raycastHit.point;
         }
-// Check if the pointer is over a UI element
+        // Check if the pointer is over a UI element
         overUI = EventSystem.current.IsPointerOverGameObject();
+
+        // After the building is placed, resets flag.
+        if (BuildingJustPlaced)
+            BuildingJustPlaced = false;
     }
 
     public void SelectPlacedBuilding(int buildingDataIndex)
@@ -135,5 +140,7 @@ public class BuildingPlacer : MonoBehaviour
         EventManager.TriggerEvent("UpdateResourceTexts");
         //update the UI to reflect which buildings can be placed
         EventManager.TriggerEvent("CHeckBuildingButtons");
+        // sets flag to prevent just placed building from being selected
+        BuildingJustPlaced = true;
     }
 }

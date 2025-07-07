@@ -27,7 +27,7 @@ public class UnitManager : MonoBehaviour
 
     private void OnEnable()
     {
-        _defaultControls.UI.Click.canceled += OnClick;
+        _defaultControls.UI.Click.performed += OnClick;
         _defaultControls.UI.Click.Enable();
         _defaultControls.UI.MultiSelect.started += OnMultiSelect;
         _defaultControls.UI.MultiSelect.canceled += OnMultiSelectEnd;
@@ -42,8 +42,7 @@ public class UnitManager : MonoBehaviour
     }
     void OnClick(InputAction.CallbackContext context)
     {
-        Debug.Log(UnitsSelection.DragJustReleased);
-        if (UnitsSelection.DragJustReleased)
+        if (UnitsSelection.DragJustReleased || BuildingPlacer.BuildingJustPlaced)
             return; // Ignore clicks if the mouse drag just ended
         if (Physics.Raycast(_ray, out _raycastHit, 1000f) &&
         _raycastHit.collider.gameObject == gameObject)
@@ -63,9 +62,7 @@ public class UnitManager : MonoBehaviour
         else if (!(_raycastHit.collider.gameObject.tag == "Unit"))
         {
             Deselect();
-            Debug.Log("Deselect() called");
         }
-        Debug.Log("Current selected units: " + string.Join(", ", Globals.SELECTED_UNITS));
     }
 
     void OnMultiSelect(InputAction.CallbackContext context)
